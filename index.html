@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>writer</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+    <script type="module" src="/src/main.ts" defer></script>
+  </head>
+  <body>
+    <div id="app">
+      <header class="titlebar" data-tauri-drag-region>
+        <div class="titlebar-left">
+          <button
+            type="button"
+            id="btn-panel"
+            class="icon-btn"
+            title="设置"
+          >
+            ⚙
+          </button>
+          <button type="button" id="btn-import" class="titlebar-text-btn" title="导入文本文件 (Ctrl+O)">
+            导入
+          </button>
+          <button type="button" id="btn-save" class="titlebar-text-btn" title="保存到文件 (Ctrl+S，Ctrl+Shift+S 另存为)">
+            保存
+          </button>
+        </div>
+        <span class="app-title">writer</span>
+        <div class="titlebar-right">
+          <button type="button" id="btn-min" class="icon-btn" title="最小化">−</button>
+          <button type="button" id="btn-hide" class="icon-btn" title="隐藏 / 显示">⊘</button>
+          <button type="button" id="btn-close" class="icon-btn danger" title="退出">×</button>
+        </div>
+      </header>
+
+      <aside id="panel" class="panel" aria-label="设置面板">
+        <div class="panel-inner">
+          <section class="panel-appearance" aria-label="外观">
+            <h2 class="panel-heading">外观</h2>
+            <label class="field">
+              <span>背景不透明度</span>
+              <input type="range" id="inp-bg-alpha" min="0" max="100" step="1" />
+              <output id="out-bg-alpha">100%</output>
+            </label>
+            <label class="field">
+              <span>文字不透明度</span>
+              <input type="range" id="inp-text-alpha" min="0" max="100" step="1" />
+              <output id="out-text-alpha">100%</output>
+            </label>
+            <div class="field-row-dual">
+              <label class="field field-dual-cell">
+                <span>背景颜色</span>
+                <input type="color" id="inp-bg-color" />
+              </label>
+              <label class="field field-dual-cell">
+                <span>文字颜色</span>
+                <input type="color" id="inp-text-color" />
+              </label>
+            </div>
+            <div class="field-row-dual">
+              <label class="field field-dual-cell">
+                <span>字号</span>
+                <input type="range" id="inp-font-size" min="10" max="36" step="1" />
+                <output id="out-font-size">15px</output>
+              </label>
+              <label class="field field-dual-cell">
+                <span>行高</span>
+                <input type="range" id="inp-line-height" min="110" max="220" step="5" />
+                <output id="out-line-height">1.55</output>
+              </label>
+            </div>
+            <label class="field">
+              <span>字体</span>
+              <select id="inp-font-family">
+                <option value="'Segoe UI', 'Microsoft YaHei', sans-serif">Segoe UI / 微软雅黑</option>
+                <option value="'Microsoft YaHei', sans-serif">微软雅黑</option>
+                <option value="system-ui, sans-serif">系统 UI</option>
+                <option value="Consolas, 'Courier New', monospace">Consolas</option>
+                <option value="'SimSun', serif">宋体</option>
+                <option value="'KaiTi', serif">楷体</option>
+              </select>
+            </label>
+          </section>
+
+          <h2 class="panel-heading">快捷键</h2>
+          <p class="hint hint-tight">
+            点「录制」后按键；<kbd>Esc</kbd> 取消。<kbd>Ctrl</kbd>+滚轮调背景透明度，<kbd>Shift</kbd>+滚轮调文字透明度（暂不可自定义）。
+          </p>
+          <div class="shortcut-row-dual">
+            <div class="shortcut-mini">
+              <span class="shortcut-label">纯净</span>
+              <code class="shortcut-display" id="disp-shortcut-write"></code>
+              <button type="button" class="btn-shortcut" id="btn-rec-write">录制</button>
+            </div>
+            <div class="shortcut-mini">
+              <span class="shortcut-label">隐藏</span>
+              <code class="shortcut-display" id="disp-shortcut-hide"></code>
+              <button type="button" class="btn-shortcut" id="btn-rec-hide">录制</button>
+            </div>
+          </div>
+          <h2 class="panel-heading">窗口</h2>
+          <label class="field checkbox">
+            <input type="checkbox" id="inp-always-top" />
+            <span>显示置顶</span><button type="button" id="btn-reset" class="btn-secondary">恢复默认</button>
+          </label>
+        </div>
+      </aside>
+
+      <main class="editor-shell">
+        <div
+          id="write-drag-strip"
+          class="write-drag-strip"
+          data-tauri-drag-region
+          aria-hidden="true"
+        ></div>
+        <textarea
+          id="editor"
+          spellcheck="false"
+          placeholder="在此输入，自动保存本机。"
+        ></textarea>
+      </main>
+    </div>
+  </body>
+</html>

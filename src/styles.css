@@ -1,0 +1,507 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 浅色简洁主题（与 main.ts defaultSettings 一致；运行时由 applyCss 覆盖编辑区变量） */
+:root {
+  --bg-r: 255;
+  --bg-g: 255;
+  --bg-b: 255;
+  --bg-a: 1;
+  --text: rgba(23, 23, 23, 1);
+  --titlebar-bg: rgba(255, 255, 255, 0.97);
+  --panel-bg: rgba(248, 248, 248, 0.98);
+  --accent: #2563eb;
+  --danger: #dc2626;
+  --font-size: 15px;
+  --line-height: 1.55;
+  --font-stack: "Segoe UI", "Microsoft YaHei", sans-serif;
+  --border-subtle: rgba(0, 0, 0, 0.1);
+  --muted: rgba(0, 0, 0, 0.55);
+  --scrollbar-thumb: rgba(0, 0, 0, 0.22);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.35);
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: transparent !important;
+  font-family: var(--font-stack);
+  -webkit-font-smoothing: antialiased;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+#app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.titlebar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 38px;
+  padding: 0 6px 0 10px;
+  background: var(--titlebar-bg);
+  border-bottom: 1px solid var(--border-subtle);
+  user-select: none;
+}
+
+/* F2 纯净书写：只保留编辑区 */
+body.write-only .titlebar,
+body.write-only .panel {
+  display: none !important;
+}
+
+body.write-only .editor-shell {
+  padding: 4px 6px 6px;
+}
+
+body.write-only #editor {
+  border-radius: 0 0 10px 10px;
+}
+
+.write-drag-strip {
+  display: none;
+  flex-shrink: 0;
+  height: 10px;
+  cursor: move;
+  border-radius: 10px 10px 0 0;
+  background: rgba(var(--bg-r), var(--bg-g), var(--bg-b), calc(var(--bg-a) * 0.7));
+}
+
+body.write-only .write-drag-strip {
+  display: block;
+}
+
+.app-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.72);
+  pointer-events: none;
+}
+
+.titlebar-left,
+.titlebar-right {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  z-index: 1;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.72);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.titlebar-text-btn {
+  height: 28px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.68);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.titlebar-text-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: rgba(0, 0, 0, 0.82);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.icon-btn.danger:hover {
+  background: rgba(220, 38, 38, 0.12);
+  color: var(--danger);
+}
+
+.panel {
+  flex-shrink: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.28s ease;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--panel-bg);
+}
+
+.panel.open {
+  max-height: 520px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+.panel-inner {
+  padding: 14px 16px 18px;
+  max-width: 560px;
+}
+
+.panel-heading {
+  margin: 16px 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.42);
+}
+
+.panel-heading:first-child {
+  margin-top: 0;
+}
+
+/* 外观区：更紧凑的行距与标签列宽 */
+.panel-appearance .panel-heading {
+  margin: 0 0 6px;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+}
+
+.panel-appearance .field {
+  margin-bottom: 6px;
+  gap: 4px 8px;
+  font-size: 12px;
+}
+
+.panel-appearance .field:last-child {
+  margin-bottom: 0;
+}
+
+.panel-appearance .field > span:first-of-type {
+  flex: 0 0 6.75rem;
+}
+
+.panel-appearance .field input[type="range"] {
+  min-width: 64px;
+}
+
+.panel-appearance .field input[type="color"] {
+  width: 40px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.panel-appearance .field select {
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.panel-appearance .field output {
+  font-size: 11px;
+  min-width: 2.8em;
+}
+
+.panel-appearance .field-row-dual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  margin-bottom: 6px;
+  min-width: 0;
+}
+
+.panel-appearance .field-dual-cell {
+  margin-bottom: 0;
+  min-width: 0;
+  flex-wrap: nowrap;
+}
+
+.panel-appearance .field-dual-cell > span:first-of-type {
+  flex: 0 0 auto;
+}
+
+.panel-appearance .field-dual-cell input[type="range"] {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: none;
+}
+
+.panel-appearance .field-dual-cell input[type="color"] {
+  margin-left: 6px;
+}
+
+.field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.82);
+}
+
+.field > span:first-of-type {
+  flex: 0 0 140px;
+}
+
+.field input[type="range"] {
+  flex: 1 1 160px;
+  min-width: 64px;
+  max-width: 280px;
+  accent-color: var(--accent);
+}
+
+.field input[type="color"] {
+  width: 44px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.field select {
+  flex: 1 1 200px;
+  max-width: 320px;
+  margin-left: auto;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: #fff;
+  color: rgba(0, 0, 0, 0.88);
+  font-size: 12px;
+  color-scheme: light;
+}
+
+.field select option {
+  background-color: #fff;
+  color: #171717;
+}
+
+.field output {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  font-size: 12px;
+  min-width: 3.2em;
+  text-align: right;
+}
+
+.field.checkbox {
+  flex-wrap: nowrap;
+}
+
+.field.checkbox > span:last-of-type {
+  flex: 1;
+}
+
+.field.checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+.hint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.hint-tight {
+  margin: 0 0 12px;
+}
+
+.hint kbd {
+  display: inline-block;
+  padding: 0.1em 0.4em;
+  font-size: 0.92em;
+  font-family: inherit;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.04);
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.shortcut-row-dual {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 8px;
+}
+
+.shortcut-mini {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 200px;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.shortcut-label {
+  flex: 0 0 auto;
+  width: 2em;
+  color: rgba(0, 0, 0, 0.72);
+  font-size: 12px;
+}
+
+.shortcut-mini .shortcut-display {
+  flex: 1 1 72px;
+  min-width: 0;
+  max-width: 160px;
+  margin-left: 0;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(0, 0, 0, 0.03);
+  font-size: 11px;
+  font-family: ui-monospace, monospace;
+  color: rgba(0, 0, 0, 0.72);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.shortcut-recording {
+  box-shadow: inset 0 0 0 2px rgba(37, 99, 235, 0.35);
+}
+
+.btn-shortcut {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.82);
+}
+
+.btn-shortcut:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.btn-shortcut.recording {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.btn-secondary {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: #fff;
+  color: rgba(0, 0, 0, 0.82);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.editor-shell {
+  flex: 1;
+  min-height: 0;
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+#editor {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 10px;
+  resize: none;
+  outline: none;
+  font-family: var(--font-stack);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  color: var(--text);
+  background: rgba(var(--bg-r), var(--bg-g), var(--bg-b), var(--bg-a));
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  caret-color: var(--accent);
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+#editor::placeholder {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+#editor::-webkit-scrollbar {
+  width: 5px;
+}
+
+#editor::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#editor::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 100px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+#editor::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+body.write-only #editor {
+  box-shadow: none;
+  border: none;
+  scrollbar-width: none;
+}
+
+body.write-only #editor::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.panel.open::-webkit-scrollbar {
+  width: 5px;
+}
+
+.panel.open::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panel.open::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 100px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
