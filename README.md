@@ -1,5 +1,5 @@
 # writer
-一个离线桌面写作工具（Tauri 2 + TypeScript），支持透明背景、纯净书写模式、窗口隐藏/恢复、快捷键录制，以及文本文件导入与保存。
+一个离线桌面记事本（Tauri 2 + TypeScript），支持透明背景、纯净书写模式、窗口隐藏/恢复、快捷键录制，以及文本文件导入与保存。
 可直接下载使用版本exe放在release里面了，至于为什么一个简简单单的应用程序有10m那么大，我也不造啊（ai辅助下3h学tauri，写，测，上传出来的），然后运行时存的一些本地小数据在C:\Users*****\AppData\Local\com.writer.transparent-notepad上，也不多。为什么叫writer就是致敬我觉得很好用的软件reader。如果有什么问题可以邮箱2048439523@qq.com。
 
 ## 功能
