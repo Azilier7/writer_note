@@ -51,7 +51,7 @@ cargo build --release
 ## 快捷键
 
 - 纯净书写：默认 `F2`
-- 隐藏 / 恢复窗口：默认 `Ctrl+Shift+H`
+- 隐藏 / 恢复窗口：默认 `Ctrl+Shift+H`，鼠标中键默认为隐藏。
 - 导入文件：`Ctrl+O`
 - 保存：`Ctrl+S`
 - 另存为：`Ctrl+Shift+S`
