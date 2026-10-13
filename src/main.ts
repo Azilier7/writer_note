@@ -146,6 +146,11 @@ function saveDocumentPath(p: string | null) {
   else localStorage.setItem(STORAGE_DOC_PATH, p);
 }
 
+function updateCharCount(text: string): void {
+  const el = document.getElementById("char-count");
+  if (el) el.textContent = `${text.replace(/\s/g, "").length} 字`;
+}
+
 function basenamePath(p: string): string {
   const n = p.replace(/\\/g, "/");
   const i = n.lastIndexOf("/");
@@ -369,6 +374,7 @@ async function importFromFile(editor: HTMLTextAreaElement) {
     const path = typeof selected === "string" ? selected : selected[0];
     const text = await readTextFile(path);
     editor.value = text;
+    updateCharCount(text);
     flushContentToStorage(text);
     saveDocumentPath(path);
   } catch (e) {
@@ -543,6 +549,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   applyCss(settings);
   editor.value = loadContent();
+  updateCharCount(editor.value);
 
   const persist = (next: Settings) => saveSettings(next);
 
@@ -587,13 +594,21 @@ window.addEventListener("DOMContentLoaded", async () => {
     { passive: false, capture: true },
   );
 
-  editor.addEventListener("input", () => scheduleSaveContent(editor.value));
+  editor.addEventListener("input", () => {
+    updateCharCount(editor.value);
+    scheduleSaveContent(editor.value);
+  });
 
   document.getElementById("btn-min")!.addEventListener("click", () => {
     void getCurrentWindow().minimize();
   });
   document.getElementById("btn-hide")!.addEventListener("click", () => {
     void toggleWindowHidden();
+  });
+  document.addEventListener("mousedown", (e) => {
+    if (e.button !== 1) return;
+    e.preventDefault();
+    void getCurrentWindow().hide();
   });
   document.getElementById("btn-close")!.addEventListener("click", () => {
     void getCurrentWindow().close();
